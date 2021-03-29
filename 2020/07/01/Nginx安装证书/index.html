@@ -1,0 +1,191 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nginx安装证书 | 小郭杂货铺</title><meta name="keywords" content="Nginx,证书"><meta name="author" content="郭光硕"><meta name="copyright" content="郭光硕"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1. 前提准备条件您的Nginx或Tengine服务器需具备以下条件：  服务器已开启了443端口（HTTPS服务的默认端口） 服务器上已安装了http_ssl_module模块（启用SSL功能）  2. 部署背景信息 本文档以CentOS 7、Nginx 1.18.0为例 本文档证书名称以DomainName为示例，如证书文件名称为DomainName.pem，证书密钥文件名称为DomainNa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx安装证书">
+<meta property="og:url" content="http://example.com/2020/07/01/Nginx%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6/index.html">
+<meta property="og:site_name" content="小郭杂货铺">
+<meta property="og:description" content="1. 前提准备条件您的Nginx或Tengine服务器需具备以下条件：  服务器已开启了443端口（HTTPS服务的默认端口） 服务器上已安装了http_ssl_module模块（启用SSL功能）  2. 部署背景信息 本文档以CentOS 7、Nginx 1.18.0为例 本文档证书名称以DomainName为示例，如证书文件名称为DomainName.pem，证书密钥文件名称为DomainNa">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2020-07-01T05:00:00.000Z">
+<meta property="article:modified_time" content="2020-10-30T08:29:40.615Z">
+<meta property="article:author" content="郭光硕">
+<meta property="article:tag" content="Nginx">
+<meta property="article:tag" content="证书">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2020/07/01/Nginx%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-10-30 16:29:40'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小郭杂货铺</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Nginx安装证书</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-07-01T05:00:00.000Z" title="发表于 2020-07-01 13:00:00">2020-07-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-10-30T08:29:40.615Z" title="更新于 2020-10-30 16:29:40">2020-10-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Nginx/">Nginx</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Nginx安装证书"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="1-前提准备条件"><a href="#1-前提准备条件" class="headerlink" title="1. 前提准备条件"></a>1. 前提准备条件</h1><p>您的Nginx或Tengine服务器需具备以下条件：</p>
+<ul>
+<li>服务器已开启了443端口（HTTPS服务的默认端口）</li>
+<li>服务器上已安装了http_ssl_module模块（启用SSL功能）</li>
+</ul>
+<h1 id="2-部署背景信息"><a href="#2-部署背景信息" class="headerlink" title="2. 部署背景信息"></a>2. 部署背景信息</h1><ul>
+<li>本文档以CentOS 7、Nginx 1.18.0为例</li>
+<li>本文档证书名称以<strong>DomainName</strong>为示例，如证书文件名称为<strong>DomainName.pem</strong>，证书密钥文件名称为<strong>DomainName.key</strong></li>
+<li>下载的Nginx证书压缩文件解压后包含：<ul>
+<li>.pem：证书文件。PEM文件的扩展名为CRT格式</li>
+<li>.key：证书的密钥文件。申请证书时如果未选择自动创建CRS，则下载的证书文件压缩包中不会包含.key文件，需要您将自己手动创建的密钥文件拷贝到cert目录下</li>
+</ul>
+</li>
+</ul>
+<p><strong>说明</strong> .pem扩展名的证书文件采用Base64-encoded的PEM格式文本文件，您可根据需要修改成其他扩展名</p>
+<h1 id="3-具体操作步骤"><a href="#3-具体操作步骤" class="headerlink" title="3. 具体操作步骤"></a>3. 具体操作步骤</h1><ol>
+<li><p>将Nginx服务器证书压缩包下载到本地。</p>
+</li>
+<li><p>解压已下载保存到本地的Nginx证书压缩包文件。</p>
+<p>解压后的文件夹中有2个文件：</p>
+<ul>
+<li>证书文件：以.pem为后缀或文件类型。</li>
+<li>密钥文件：以.key为后缀或文件类型。</li>
+</ul>
+</li>
+<li><p>登录服务器，创建目录存放证书文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir /etc/nginx/cert</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明：</strong>将证书文件拷贝到此目录下即可，如果您在申请证书时选择<strong>手动创建CSR文件</strong>，请将对应的密钥文件放到cert目录中，并命名为<strong>DomainName.key</strong>。</p>
+</li>
+<li><p>添加配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/nginx/conf.d/DomainName.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;		<span class="comment"># SSL协议访问端口号为443</span></span><br><span class="line">    <span class="attribute">server_name</span> DomainName.com;	<span class="comment"># 站点部署的域名</span></span><br><span class="line">    <span class="attribute">root</span> /home/html/www;	<span class="comment"># 站点根目录</span></span><br><span class="line">    <span class="attribute">index</span> index.htm index.html index.php;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> cert/DomainName.pem;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> cert/DomainName.key;</span><br><span class="line">    <span class="attribute">ssl_session_timeout</span> <span class="number">5m</span>;	<span class="comment"># 指定客户端可以重用会话参数的时间</span></span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;	<span class="comment">#加密算法套件</span></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>; <span class="comment"># 允许使用TLS协议</span></span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="comment">#include location.conf;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>加密套件解读</strong>：ECDHE-RSA-AES128-GCM-SHA256 为例</p>
+<p>ECDHE：秘钥交换算法，RSA：签名算法，AES128：对称加密算法，GCM-SHA256：签名算法</p>
+<p>默认项：秘钥交换算法：RSA，签名算法：RSA，模式：CBC</p>
+<p>AES256-SHA256 也就是 RSA-RSA-AES256-CBC-SHA256</p>
+<p><strong>设置HTTP请求自动跳转HTTPS</strong>（可选）</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="attribute">server_name</span> DomainName.com;</span><br><span class="line">    <span class="attribute">root</span> /home/html/www;</span><br><span class="line">    <span class="attribute">index</span> index.htm index.html index.php;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> cert/DomainName.pem;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> cert/DomainName.key;</span><br><span class="line">    <span class="attribute">ssl_session_timeout</span> <span class="number">5m</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;</span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>;</span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> DomainName.com; <span class="comment"># 应该设置需要绑定的域名</span></span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span> https://$host<span class="variable">$1</span> <span class="literal">permanent</span>;</span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>证书安装完成后，可通过登录证书的绑定域名验证该证书是否安装成功</p>
+<p>重启Nginx服务器，访问 <a target="_blank" rel="noopener" href="https://domainname.com/">https://DomainName.com</a> ，当然应该访问自己部署的网站地址</p>
+<p>在浏览器地址栏左侧看到显示🔒，则部署安装成功。</p>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">郭光硕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2020/07/01/Nginx%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6/">http://example.com/2020/07/01/Nginx%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">小郭杂货铺</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Nginx/">Nginx</a><a class="post-meta__tags" href="/tags/%E8%AF%81%E4%B9%A6/">证书</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/07/01/Nginx%E7%9A%84%E5%AE%89%E8%A3%85/"><img class="prev-cover" src="https://gitee.com/ssugmdxtdh/ssugmdxtdh.img/raw/master/image/NGINX-Logo.svg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Ningx的安装</div></div></a></div><div class="next-post pull-right"><a href="/2020/06/28/Linux%E7%B3%BB%E7%BB%9F%E6%95%85%E9%9A%9C/"><img class="next-cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Linux系统故障</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/07/01/Nginx的安装/" title="Ningx的安装"><img class="cover" src="https://gitee.com/ssugmdxtdh/ssugmdxtdh.img/raw/master/image/NGINX-Logo.svg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-01</div><div class="title">Ningx的安装</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">郭光硕</div><div class="author-info__description">知命不惧日日自新</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%89%8D%E6%8F%90%E5%87%86%E5%A4%87%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.</span> <span class="toc-text">1. 前提准备条件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E9%83%A8%E7%BD%B2%E8%83%8C%E6%99%AF%E4%BF%A1%E6%81%AF"><span class="toc-number">2.</span> <span class="toc-text">2. 部署背景信息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E5%85%B7%E4%BD%93%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.</span> <span class="toc-text">3. 具体操作步骤</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2020/11/19/CentOS%E5%AE%89%E8%A3%85MySQL5-7/" title="CentOS安装MySQL5.7"><img src="https://gitee.com/ssugmdxtdh/ssugmdxtdh.img/raw/master/image/MySQL-Logo.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CentOS安装MySQL5.7"/></a><div class="content"><a class="title" href="/2020/11/19/CentOS%E5%AE%89%E8%A3%85MySQL5-7/" title="CentOS安装MySQL5.7">CentOS安装MySQL5.7</a><time datetime="2020-11-19T02:06:58.000Z" title="发表于 2020-11-19 10:06:58">2020-11-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/11/13/K8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85Ingress/" title="K8s集群安装Ingress"><img src="https://gitee.com/ssugmdxtdh/ssugmdxtdh.img/raw/master/image/K8s-flower.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s集群安装Ingress"/></a><div class="content"><a class="title" href="/2020/11/13/K8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85Ingress/" title="K8s集群安装Ingress">K8s集群安装Ingress</a><time datetime="2020-11-13T05:29:28.000Z" title="发表于 2020-11-13 13:29:28">2020-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/10/29/Kubernetes%E5%85%A5%E9%97%A8/" title="Kubernetes入门"><img src="https://gitee.com/ssugmdxtdh/ssugmdxtdh.img/raw/master/image/K8s-flower.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Kubernetes入门"/></a><div class="content"><a class="title" href="/2020/10/29/Kubernetes%E5%85%A5%E9%97%A8/" title="Kubernetes入门">Kubernetes入门</a><time datetime="2020-10-29T01:33:59.000Z" title="发表于 2020-10-29 09:33:59">2020-10-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/10/15/1.k8s%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%EF%BC%9A/" title="k8s集群基础"><img src="https://gitee.com/ssugmdxtdh/ssugmdxtdh.img/raw/master/image/K8s-flower.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="k8s集群基础"/></a><div class="content"><a class="title" href="/2020/10/15/1.k8s%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%EF%BC%9A/" title="k8s集群基础">k8s集群基础</a><time datetime="2020-10-15T03:29:01.000Z" title="发表于 2020-10-15 11:29:01">2020-10-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/10/15/%E9%83%A8%E7%BD%B2Kubernetes%E9%9B%86%E7%BE%A4/" title="部署Kubernetes集群(单节点)"><img src="https://gitee.com/ssugmdxtdh/ssugmdxtdh.img/raw/master/image/K8s-flower.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="部署Kubernetes集群(单节点)"/></a><div class="content"><a class="title" href="/2020/10/15/%E9%83%A8%E7%BD%B2Kubernetes%E9%9B%86%E7%BE%A4/" title="部署Kubernetes集群(单节点)">部署Kubernetes集群(单节点)</a><time datetime="2020-10-15T03:29:01.000Z" title="发表于 2020-10-15 11:29:01">2020-10-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By 郭光硕</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

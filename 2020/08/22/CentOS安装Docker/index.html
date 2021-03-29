@@ -1,0 +1,282 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>在CentOS上安装Docker | 小郭杂货铺</title><meta name="keywords" content="Docker"><meta name="author" content="郭光硕"><meta name="copyright" content="郭光硕"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="在CentOS上安装Docker官方文档：https:&#x2F;&#x2F;docs.docker.com&#x2F;engine&#x2F;install&#x2F;centos 前提准备条件操作系统要求要安装Docker Engine，您需要一个CentOS 7的维护版本。不支持或未测试存档版本。 该centos-extras库必须启用。默认情况下，此存储库是启用的，但是如果已禁用它，则需要 重新启用它。 overlay2建议使用存储驱动程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在CentOS上安装Docker">
+<meta property="og:url" content="http://example.com/2020/08/22/CentOS%E5%AE%89%E8%A3%85Docker/index.html">
+<meta property="og:site_name" content="小郭杂货铺">
+<meta property="og:description" content="在CentOS上安装Docker官方文档：https:&#x2F;&#x2F;docs.docker.com&#x2F;engine&#x2F;install&#x2F;centos 前提准备条件操作系统要求要安装Docker Engine，您需要一个CentOS 7的维护版本。不支持或未测试存档版本。 该centos-extras库必须启用。默认情况下，此存储库是启用的，但是如果已禁用它，则需要 重新启用它。 overlay2建议使用存储驱动程">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2020-08-22T11:45:47.000Z">
+<meta property="article:modified_time" content="2020-10-15T04:10:26.165Z">
+<meta property="article:author" content="郭光硕">
+<meta property="article:tag" content="Docker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2020/08/22/CentOS%E5%AE%89%E8%A3%85Docker/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-10-15 12:10:26'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小郭杂货铺</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">在CentOS上安装Docker</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-08-22T11:45:47.000Z" title="发表于 2020-08-22 19:45:47">2020-08-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-10-15T04:10:26.165Z" title="更新于 2020-10-15 12:10:26">2020-10-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Docker/">Docker</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="在CentOS上安装Docker"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="在CentOS上安装Docker"><a href="#在CentOS上安装Docker" class="headerlink" title="在CentOS上安装Docker"></a>在CentOS上安装Docker</h1><p>官方文档：<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/centos">https://docs.docker.com/engine/install/centos</a></p>
+<h2 id="前提准备条件"><a href="#前提准备条件" class="headerlink" title="前提准备条件"></a>前提准备条件</h2><h3 id="操作系统要求"><a href="#操作系统要求" class="headerlink" title="操作系统要求"></a>操作系统要求</h3><p>要安装Docker Engine，您需要一个CentOS 7的维护版本。不支持或未测试存档版本。</p>
+<p>该<code>centos-extras</code>库必须启用。默认情况下，此存储库是启用的，但是如果已禁用它，则需要 <a target="_blank" rel="noopener" href="https://wiki.centos.org/AdditionalResources/Repositories">重新启用它</a>。</p>
+<p><code>overlay2</code>建议使用存储驱动程序。</p>
+<h3 id="卸载旧的版本"><a href="#卸载旧的版本" class="headerlink" title="卸载旧的版本"></a>卸载旧的版本</h3><p>较旧的Docker版本称为<code>docker</code>或<code>docker-engine</code>。如果已安装这些程序，请卸载它们以及相关的依赖项。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum remove docker \</span><br><span class="line">                  docker-client \</span><br><span class="line">                  docker-client-latest \</span><br><span class="line">                  docker-common \</span><br><span class="line">                  docker-latest \</span><br><span class="line">                  docker-latest-logrotate \</span><br><span class="line">                  docker-logrotate \</span><br><span class="line">                  docker-engine</span><br></pre></td></tr></table></figure>
+
+<p>如果<code>yum</code>报告未安装这些软件包，则没有问题。</p>
+<p><code>/var/lib/docker/</code>的内容 (包括映像，容器，卷和网络) 被保留。 Docker Engine软件包现在称为<code>docker-ce</code>。</p>
+<h2 id="使用存储库安装"><a href="#使用存储库安装" class="headerlink" title="使用存储库安装"></a>使用存储库安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 官方YUM源(不推荐)</span></span><br><span class="line">$ yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line"><span class="comment"># 阿里云YUM源(推荐)</span></span><br><span class="line">$ yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li><strong>可选</strong>：启用<strong>测试</strong>存储库。</li>
+</ul>
+<p>这些存储库包含在<code>docker.repo</code>上面的文件中，但默认情况下处于禁用状态。您可以在稳定存储库旁边启用它们。以下命令启用<strong>每晚</strong>存储库。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum-config-manager --<span class="built_in">enable</span> docker-ce-nightly</span><br></pre></td></tr></table></figure>
+
+<p>要启用<strong>测试</strong>通道，请运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum-config-manager --<span class="built_in">enable</span> docker-ce-test</span><br></pre></td></tr></table></figure>
+
+<p>您可以通过运行带有标志的命令来禁用<strong>夜间</strong>或<strong>测试</strong>存储库 。要重新启用它，请使用该标志。以下命令禁用<strong>夜间</strong>存储库。<code>yum-config-manager``--disable``--enable</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum-config-manager --<span class="built_in">disable</span> docker-ce-nightly</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="安装最新版本的Docker-Engine"><a href="#安装最新版本的Docker-Engine" class="headerlink" title="安装最新版本的Docker Engine"></a>安装最新版本的Docker Engine</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure>
+
+<p>如果提示您接受GPG密钥，请验证指纹是否匹配 <code>060A 61C5 1B55 8A7F 742B 77AA C52F EB6B 621E 9F35</code>，如果是，则接受它。</p>
+<blockquote>
+<p>有多个Docker存储库吗？</p>
+<p>如果启用了多个Docker存储库，则在未在<code>yum install</code>or <code>yum update</code>命令中指定版本的情况下进行安装或更新将始终安装可能的最高版本，这可能不适合您的稳定性需求。</p>
+</blockquote>
+<p>Docker已安装但尚未启动。</p>
+<h3 id="安装特定版本的Docker-Engine"><a href="#安装特定版本的Docker-Engine" class="headerlink" title="安装特定版本的Docker Engine"></a>安装特定版本的Docker Engine</h3><p>#列出并排序您存储库中可用的版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ yum list docker-ce --showduplicates | sort -r</span><br><span class="line"> * updates: mirrors.huaweicloud.com</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line">Loaded plugins: fastestmirror</span><br><span class="line"> * extras: mirrors.huaweicloud.com</span><br><span class="line">docker-ce.x86_64            3:19.03.9-3.el7                     docker-ce-stable</span><br><span class="line">docker-ce.x86_64            3:19.03.8-3.el7                     docker-ce-stable</span><br><span class="line">···</span><br><span class="line">docker-ce.x86_64            18.06.1.ce-3.el7                    docker-ce-stable</span><br><span class="line">docker-ce.x86_64            18.06.0.ce-3.el7                    docker-ce-stable</span><br><span class="line"> * base: mirrors.huaweicloud.com</span><br><span class="line">Available Packages</span><br></pre></td></tr></table></figure>
+
+<p>返回的列表取决于启用的存储库，并且特定于您的CentOS版本（<code>.el7</code>在本示例中以后缀表示）。</p>
+<p>通过其完全合格的软件包名称安装特定版本，该软件包名称是软件包名称（<code>docker-ce</code>）加上版本字符串（第二列），从第一个冒号（<code>:</code>）到第一个连字符，以连字符（<code>-</code>）分隔。例如，<code>docker-ce-18.09.1</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum -y install docker-ce-&lt;VERSION_STRING&gt; docker-ce-cli-&lt;VERSION_STRING&gt; containerd.io</span><br></pre></td></tr></table></figure>
+
+<p>启动Docker</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl start docker</span><br><span class="line">$ systemctl <span class="built_in">enable</span> docker</span><br></pre></td></tr></table></figure>
+
+<p>通过运行<code>hello-world</code> 映像来验证是否正确安装了Docker Engine </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run hello-world</span><br></pre></td></tr></table></figure>
+
+<p>此命令下载测试图像并在容器中运行它。容器运行时，它会打印参考消息并退出。</p>
+<h2 id="使用软件包安装"><a href="#使用软件包安装" class="headerlink" title="使用软件包安装"></a>使用软件包安装</h2><p>如果无法使用Docker的存储库安装Docker，则可以下载该<code>.rpm</code>发行版的 文件并手动安装。每次要升级Docker Engine时，都需要下载一个新文件。</p>
+<ol>
+<li><p>转到<a target="_blank" rel="noopener" href="https://download.docker.com/linux/centos/">https://download.docker.com/linux/centos/</a> 并选择您的CentOS版本。然后浏览<code>x86_64/stable/Packages/</code> 并下载<code>.rpm</code>您要安装的Docker版本的文件。</p>
+<blockquote>
+<p><strong>注意</strong>：要安装<strong>夜间</strong>或<strong>测试</strong>（预发布）软件包，<code>stable</code>请将上述URL中的单词更改为<code>nightly</code>或<code>test</code>。 <a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/">了解<strong>每晚</strong>和<strong>测试</strong>频道</a>。</p>
+</blockquote>
+</li>
+<li><p>安装Docker Engine，将下面的路径更改为您下载Docker软件包的路径。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install &#x2F;path&#x2F;to&#x2F;package.rpm</span><br></pre></td></tr></table></figure>
+
+<p>Docker已安装但尚未启动。<code>docker</code>创建该组，但没有用户添加到该组。</p>
+</li>
+<li><p>启动Docker</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo systemctl start docker</span><br></pre></td></tr></table></figure></li>
+<li><p>通过运行<code>hello-world</code> 映像来验证是否正确安装了Docker Engine 。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker run hello-world</span><br></pre></td></tr></table></figure>
+
+<p>此命令下载测试图像并在容器中运行它。容器运行时，它会打印参考消息并退出。</p>
+</li>
+</ol>
+<p>Docker Engine已安装并正在运行。您需要使用<code>sudo</code>来运行Docker命令。继续<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/linux-postinstall/">执行Linux的安装后步骤，</a>以允许非特权用户运行Docker命令以及其他可选配置步骤。</p>
+<h3 id="升级DOCKER引擎"><a href="#升级DOCKER引擎" class="headerlink" title="升级DOCKER引擎"></a>升级DOCKER引擎</h3><p>要升级Docker Engine，请下载更新的软件包文件，并使用 代替重复 <a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/centos/#install-from-a-package">安装过程</a>，并指向新文件。<code>yum -y upgrade yum -y install</code></p>
+<h2 id="使用便捷脚本安装"><a href="#使用便捷脚本安装" class="headerlink" title="使用便捷脚本安装"></a>使用便捷脚本安装</h2><blockquote>
+<p>查看官方文档。<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/centos">https://docs.docker.com/engine/install/centos</a></p>
+</blockquote>
+<h2 id="Docker镜像加速器"><a href="#Docker镜像加速器" class="headerlink" title="Docker镜像加速器"></a>Docker镜像加速器</h2><p>创建或修改 <code>/etc/docker/daemon.json</code>文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /etc/docker</span><br><span class="line">sudo tee /etc/docker/daemon.json &lt;&lt;-<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://te0nt1jn.mirror.aliyuncs.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>镜像加速器</th>
+<th>加速器地址</th>
+<th>专属加速器？</th>
+<th>其他加速</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Docker官方镜像</td>
+<td><a target="_blank" rel="noopener" href="https://registry.docker-cn.com/">https://registry.docker-cn.com</a></td>
+<td></td>
+<td>Docker Hub</td>
+</tr>
+<tr>
+<td>DaoCloud镜像站</td>
+<td><a target="_blank" rel="noopener" href="http://f1361db2.m.daocloud.io/">http://f1361db2.m.daocloud.io</a></td>
+<td>可登录，系统分配</td>
+<td>Docker Hub</td>
+</tr>
+<tr>
+<td>Azure 中国镜像</td>
+<td><a target="_blank" rel="noopener" href="https://dockerhub.azk8s.cn/">https://dockerhub.azk8s.cn</a></td>
+<td></td>
+<td>Docker Hub、GCR、Quay</td>
+</tr>
+<tr>
+<td>科大镜像站</td>
+<td><a target="_blank" rel="noopener" href="https://docker.mirrors.ustc.edu.cn/">https://docker.mirrors.ustc.edu.cn</a></td>
+<td></td>
+<td>Docker Hub、GCR、Quay</td>
+</tr>
+<tr>
+<td>阿里云</td>
+<td>https://<Your_Code>.mirror.aliyuncs.com</td>
+<td>需登录，系统分配</td>
+<td>Docker Hub</td>
+</tr>
+<tr>
+<td>七牛云</td>
+<td><a target="_blank" rel="noopener" href="https://reg-mirror.qiniu.com/">https://reg-mirror.qiniu.com</a></td>
+<td></td>
+<td>Docker Hub、GCR、Quay</td>
+</tr>
+<tr>
+<td>网易云</td>
+<td><a target="_blank" rel="noopener" href="https://hub-mirror.c.163.com/">https://hub-mirror.c.163.com</a></td>
+<td></td>
+<td>Docker Hub</td>
+</tr>
+<tr>
+<td>腾讯云</td>
+<td><a target="_blank" rel="noopener" href="https://mirror.ccs.tencentyun.com/">https://mirror.ccs.tencentyun.com</a></td>
+<td></td>
+<td>Docker Hub</td>
+</tr>
+</tbody></table>
+<p>检查加速器是否生效</p>
+<p>命令行执行 <code>docker info</code>，如果从结果中看到了如下内容，说明配置成功。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ docker info</span><br><span class="line">Registry Mirrors:</span><br><span class="line"> [...]</span><br><span class="line"> https://te0nt1jn.mirror.aliyuncs.com</span><br></pre></td></tr></table></figure>
+
+<p>Docker Hub 镜像测速</p>
+<p>使用镜像前后，可使用 <code>time</code> 统计所花费的总时间。测速前先移除本地的镜像！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ docker rmi node:latest</span><br><span class="line">$ time docker pull node:latest</span><br><span class="line">Pulling repository node</span><br><span class="line">[...]</span><br><span class="line">real   1m14.078s</span><br><span class="line">user   0m0.176s</span><br><span class="line">sys    0m0.120s</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">郭光硕</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2020/08/22/CentOS%E5%AE%89%E8%A3%85Docker/">http://example.com/2020/08/22/CentOS%E5%AE%89%E8%A3%85Docker/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">小郭杂货铺</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Docker/">Docker</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/09/22/Ansible/"><img class="prev-cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Ansible</div></div></a></div><div class="next-post pull-right"><a href="/2020/08/13/KVM%E7%AC%94%E8%AE%B0/"><img class="next-cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">KVM笔记</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">郭光硕</div><div class="author-info__description">知命不惧日日自新</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9C%A8CentOS%E4%B8%8A%E5%AE%89%E8%A3%85Docker"><span class="toc-number">1.</span> <span class="toc-text">在CentOS上安装Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E6%8F%90%E5%87%86%E5%A4%87%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text">前提准备条件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82"><span class="toc-number">1.1.1.</span> <span class="toc-text">操作系统要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%B8%E8%BD%BD%E6%97%A7%E7%9A%84%E7%89%88%E6%9C%AC"><span class="toc-number">1.1.2.</span> <span class="toc-text">卸载旧的版本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%AD%98%E5%82%A8%E5%BA%93%E5%AE%89%E8%A3%85"><span class="toc-number">1.2.</span> <span class="toc-text">使用存储库安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%E7%9A%84Docker-Engine"><span class="toc-number">1.2.1.</span> <span class="toc-text">安装最新版本的Docker Engine</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E7%89%B9%E5%AE%9A%E7%89%88%E6%9C%AC%E7%9A%84Docker-Engine"><span class="toc-number">1.2.2.</span> <span class="toc-text">安装特定版本的Docker Engine</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%AE%89%E8%A3%85"><span class="toc-number">1.3.</span> <span class="toc-text">使用软件包安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%87%E7%BA%A7DOCKER%E5%BC%95%E6%93%8E"><span class="toc-number">1.3.1.</span> <span class="toc-text">升级DOCKER引擎</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E4%BE%BF%E6%8D%B7%E8%84%9A%E6%9C%AC%E5%AE%89%E8%A3%85"><span class="toc-number">1.4.</span> <span class="toc-text">使用便捷脚本安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F%E5%99%A8"><span class="toc-number">1.5.</span> <span class="toc-text">Docker镜像加速器</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2020/11/19/CentOS%E5%AE%89%E8%A3%85MySQL5-7/" title="CentOS安装MySQL5.7"><img src="https://gitee.com/ssugmdxtdh/ssugmdxtdh.img/raw/master/image/MySQL-Logo.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CentOS安装MySQL5.7"/></a><div class="content"><a class="title" href="/2020/11/19/CentOS%E5%AE%89%E8%A3%85MySQL5-7/" title="CentOS安装MySQL5.7">CentOS安装MySQL5.7</a><time datetime="2020-11-19T02:06:58.000Z" title="发表于 2020-11-19 10:06:58">2020-11-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/11/13/K8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85Ingress/" title="K8s集群安装Ingress"><img src="https://gitee.com/ssugmdxtdh/ssugmdxtdh.img/raw/master/image/K8s-flower.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s集群安装Ingress"/></a><div class="content"><a class="title" href="/2020/11/13/K8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85Ingress/" title="K8s集群安装Ingress">K8s集群安装Ingress</a><time datetime="2020-11-13T05:29:28.000Z" title="发表于 2020-11-13 13:29:28">2020-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/10/29/Kubernetes%E5%85%A5%E9%97%A8/" title="Kubernetes入门"><img src="https://gitee.com/ssugmdxtdh/ssugmdxtdh.img/raw/master/image/K8s-flower.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Kubernetes入门"/></a><div class="content"><a class="title" href="/2020/10/29/Kubernetes%E5%85%A5%E9%97%A8/" title="Kubernetes入门">Kubernetes入门</a><time datetime="2020-10-29T01:33:59.000Z" title="发表于 2020-10-29 09:33:59">2020-10-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/10/15/1.k8s%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%EF%BC%9A/" title="k8s集群基础"><img src="https://gitee.com/ssugmdxtdh/ssugmdxtdh.img/raw/master/image/K8s-flower.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="k8s集群基础"/></a><div class="content"><a class="title" href="/2020/10/15/1.k8s%E9%9B%86%E7%BE%A4%E5%9F%BA%E7%A1%80%EF%BC%9A/" title="k8s集群基础">k8s集群基础</a><time datetime="2020-10-15T03:29:01.000Z" title="发表于 2020-10-15 11:29:01">2020-10-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/10/15/%E9%83%A8%E7%BD%B2Kubernetes%E9%9B%86%E7%BE%A4/" title="部署Kubernetes集群(单节点)"><img src="https://gitee.com/ssugmdxtdh/ssugmdxtdh.img/raw/master/image/K8s-flower.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="部署Kubernetes集群(单节点)"/></a><div class="content"><a class="title" href="/2020/10/15/%E9%83%A8%E7%BD%B2Kubernetes%E9%9B%86%E7%BE%A4/" title="部署Kubernetes集群(单节点)">部署Kubernetes集群(单节点)</a><time datetime="2020-10-15T03:29:01.000Z" title="发表于 2020-10-15 11:29:01">2020-10-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By 郭光硕</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
